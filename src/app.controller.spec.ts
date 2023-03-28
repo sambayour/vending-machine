@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return "Welcome! Vending Machine API (v1)"', () => {
+      expect(appController.getHello()).toBe(
+        'Welcome! Vending Machine API (v1)',
+      );
     });
   });
 });

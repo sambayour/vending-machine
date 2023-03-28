@@ -2,6 +2,10 @@
 
 An API for a vending machine
 
+## Endpoints
+
+Endpoint are documented via Swagger and can be access at `${baseUrl}/api/docs`
+
 ## Installation
 
 ```bash
