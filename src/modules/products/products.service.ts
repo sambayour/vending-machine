@@ -51,7 +51,7 @@ export default class ProductsService {
     return product;
   }
 
-  public async update(id: number, data: UpdateProductDto) {
+  public async update(id, data: UpdateProductDto) {
     await this.productRepository.update(id, data);
 
     return this.findById(id);
@@ -71,7 +71,7 @@ export default class ProductsService {
     return !!userProduct;
   }
 
-  public async delete(id: number): Promise<void> {
+  public async delete(id): Promise<void> {
     const user = await this.findById(id);
     if (!user) {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);

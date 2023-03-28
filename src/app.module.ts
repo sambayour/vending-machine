@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { configService } from './config/config.service';
 import { JwtStrategy } from './modules/auth/misc/jwt.strategy';
 import { MachineModule } from './modules/machine/machine.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -16,6 +17,9 @@ import { MachineModule } from './modules/machine/machine.module';
     UsersModule,
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
     MachineModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

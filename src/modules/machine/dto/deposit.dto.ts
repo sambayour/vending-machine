@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { DepositAmount } from 'src/enum/deposit.enum';
+import { DepositAmount } from '../../../enum/deposit.enum';
 export default class DepositDto {
   @ApiProperty({
     description: 'Amount to be deposited',

@@ -3,7 +3,7 @@ import { Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UniqueDBEntryError } from 'src/enum/db.error.enum';
+import { DuplicateDatabaseEntryError } from '../../enum/db.error.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class UsersService {
       return newUser;
     } catch (error) {
       this.logger.error(error);
-      if (error?.code === UniqueDBEntryError.uniqueErrorKey) {
+      if (error?.code === DuplicateDatabaseEntryError.uniqueErrorKey) {
         throw new HttpException(
           'User with that username already exists',
           HttpStatus.BAD_REQUEST,

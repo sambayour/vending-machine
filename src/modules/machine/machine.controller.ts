@@ -12,7 +12,7 @@ import {
 import DepositDto from './dto/deposit.dto';
 import SystemsService from './machine.service';
 import BuyDto from './dto/Buy.dto';
-import { Roles } from 'src/enum/roles.enum';
+import { Roles } from '../../enum/roles.enum';
 import { JwtAuthGuard } from '../auth/misc/jwt-auth.guard';
 import { RolesAllowed } from '../auth/misc/roles-allowed.decorator';
 import { RolesGuard } from '../auth/misc/RolesGuard';

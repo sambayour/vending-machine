@@ -26,4 +26,4 @@ async function bootstrap() {
   await app.listen(port);
   console.log('App started on', port);
 }
-bootstrap().catch((err) => console.log(err));
+bootstrap();

@@ -19,7 +19,7 @@ import CreateProductDto from './dto/createProduct.dto';
 
 import { IProduct } from './interfaces/product';
 import UpdateProductDto from './dto/updateProduct.dto';
-import { Roles } from 'src/enum/roles.enum';
+import { Roles } from '../../enum/roles.enum';
 import { JwtAuthGuard } from '../auth/misc/jwt-auth.guard';
 import { RolesGuard } from '../auth/misc/RolesGuard';
 import { RolesAllowed } from '../auth/misc/roles-allowed.decorator';

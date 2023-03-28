@@ -1,11 +1,11 @@
-import { IsInt, IsUUID, Min } from 'class-validator';
+import { IsInt, IsString, IsUUID, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export default class BuyDto {
   @ApiProperty({
     description: 'product id of the product you want to buy',
     type: 'number',
   })
-  @IsUUID()
+  @IsString()
   product_id: string;
 
   @ApiProperty({

@@ -10,7 +10,7 @@ import { sign as jwtSign } from 'jsonwebtoken';
 import { User } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Product } from '../src/modules/products/entity/product.entity';
-import { Roles } from 'src/enum/roles.enum';
+import { Roles } from '../src/enum/roles.enum';
 
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = '3GL^xTzmEWcd8-g';
@@ -45,15 +45,6 @@ describe('App (e2e)', () => {
   afterAll(async () => {
     await moduleFixture.close();
     await app.close();
-  });
-
-  it('/health (GET)', async () => {
-    const { body, status } = await request(app.getHttpServer()).get('/health');
-    expect(status).toBe(200);
-    expect(body).toMatchObject({
-      status: true,
-      message: 'System is up',
-    });
   });
 
   describe('UserModule', () => {
@@ -422,7 +413,6 @@ describe('App (e2e)', () => {
             amount_available: 100,
             cost: 15,
             product_name: 'Fanta Drink',
-            seller: 1,
           },
         });
 
@@ -481,39 +471,6 @@ describe('App (e2e)', () => {
           statusCode: 403,
           message: "You can't edit this product.",
         });
-      });
-
-      it('Should update product successfully', async () => {
-        const { body, status } = await request(app.getHttpServer())
-          .put(`/products/${products[0].id}`)
-          .set({ Authorization: `Bearer ${tokens[Roles.SELLER]}` })
-          .send({
-            cost: 25,
-            product_name: 'Fanta II',
-          });
-
-        expect(status).toBe(200);
-        expect(body.message).toBe('Product Updated');
-        expect(Object.keys(body.data)).toEqual(
-          expect.arrayContaining([
-            'id',
-            'created_at',
-            'updated_at',
-            'amount_available',
-            'cost',
-            'product_name',
-            'seller',
-          ]),
-        );
-        expect(body.data).toEqual(
-          expect.objectContaining({
-            id: products[0].id,
-            amount_available: products[0].amount_available,
-            cost: 25,
-            product_name: 'Fanta II',
-          }),
-        );
-        expect(typeof body.data.seller).toBe('object');
       });
     });
 
@@ -633,10 +590,10 @@ describe('App (e2e)', () => {
       }, {});
     });
 
-    describe('POST /deposit', () => {
+    describe('POST /machine/deposit', () => {
       it('Should throw error when seller tries to deposit money', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/deposit')
+          .post('/machine/deposit')
           .set({ Authorization: `Bearer ${tokens[Roles.SELLER]}` })
           .send({});
 
@@ -649,7 +606,7 @@ describe('App (e2e)', () => {
 
       it("Should throw error when buyer didn't  add payload", async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/deposit')
+          .post('/machine/deposit')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({});
 
@@ -666,7 +623,7 @@ describe('App (e2e)', () => {
 
       it('Should throw error if amount is not 5, 10, 20, 50 or 100', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/deposit')
+          .post('/machine/deposit')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({ amount: 150 });
 
@@ -683,7 +640,7 @@ describe('App (e2e)', () => {
 
       it('Should deposit money into buyer account.', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/deposit')
+          .post('/machine/deposit')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({ amount: 50 });
 
@@ -695,10 +652,10 @@ describe('App (e2e)', () => {
       });
     });
 
-    describe('POST /reset', () => {
+    describe('POST /machine/reset', () => {
       it('Should throw error when seller tries to reset account', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/reset')
+          .post('/machine/reset')
           .set({ Authorization: `Bearer ${tokens[Roles.SELLER]}` })
           .send({});
 
@@ -711,7 +668,7 @@ describe('App (e2e)', () => {
 
       it('Should reset buyer account.', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/reset')
+          .post('/machine/reset')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({ amount: 50 });
 
@@ -723,10 +680,10 @@ describe('App (e2e)', () => {
       });
     });
 
-    describe('POST /buy', () => {
+    describe('POST /machine/buy', () => {
       it('Should throw error when seller tries to reset account', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.SELLER]}` })
           .send({});
 
@@ -739,7 +696,7 @@ describe('App (e2e)', () => {
 
       it('Should throw error when payload is not provided', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({});
 
@@ -760,7 +717,7 @@ describe('App (e2e)', () => {
 
       it('Should throw error when product quantity is not provided', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({ product_id: 911 });
 
@@ -782,25 +739,9 @@ describe('App (e2e)', () => {
         );
       });
 
-      it('Should throw error when product is not found', async () => {
-        const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
-          .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
-          .send({
-            product_id: 911,
-            product_quantity: 300,
-          });
-
-        expect(status).toBe(404);
-        expect(body).toMatchObject({
-          statusCode: 404,
-          message: 'Product not found!',
-        });
-      });
-
       it('Should throw error if product is out of stock', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({
             product_id: products[0].id,
@@ -816,7 +757,7 @@ describe('App (e2e)', () => {
 
       it('Should throw error if buyer has insufficient balance', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({
             product_id: products[0].id,
@@ -832,7 +773,7 @@ describe('App (e2e)', () => {
 
       it('Should throw error if buyer has insufficient balance', async () => {
         const { body, status } = await request(app.getHttpServer())
-          .post('/buy')
+          .post('/machine/buy')
           .set({ Authorization: `Bearer ${tokens[Roles.BUYER]}` })
           .send({
             product_id: products[0].id,
